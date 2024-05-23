@@ -4,9 +4,9 @@ using UnityEngine.Events;
 
 public class Pole : MonoBehaviour
 {
-    public Transform stackPosition; // Position where the donuts will stack
+    public Transform stackPosition; 
     public float donutHeight = 0.2f;
-    public float moveDuration = 0.5f; // Duration of the movement animation
+    public float moveDuration = 0.5f; 
 
     public Stack<Donut> donutStack = new Stack<Donut>();
 

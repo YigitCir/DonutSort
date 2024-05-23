@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 public class DonutManager : MonoBehaviour
 {
-    public GameObject donutPrefab; // Prefab of the donut
-    public Transform[] spawnPoints; // Pole'ların spawn noktaları
-    public GameManager gameManager; // GameManager referansı
+    public GameObject donutPrefab; 
+    public Transform[] spawnPoints; 
+    public GameManager gameManager; 
 
-    private Color[] colors = { Color.red, Color.blue }; // Kullanılacak iki renk
+    private Color[] colors = { Color.red, Color.blue }; 
 
     void Start()
     {
@@ -57,7 +57,7 @@ public class DonutManager : MonoBehaviour
         System.Random rng = new System.Random();
         int n = donuts.Count;
 
-        // Fisher-Yates shuffle algoritması ile donutları karıştır
+  
         while (n > 1)
         {
             n--;
@@ -67,7 +67,7 @@ public class DonutManager : MonoBehaviour
             donuts[n] = value;
         }
 
-        // İlk iki pole'a donutları eşit şekilde dağıt
+      
         int poleIndex = 0;
         foreach (var donutObject in donuts)
         {
@@ -76,7 +76,7 @@ public class DonutManager : MonoBehaviour
             {
                 Pole targetPole = gameManager.poles[poleIndex];
                 targetPole.StackDonut(donut);
-                poleIndex = (poleIndex + 1) % 2; // Sadece ilk iki pole'u kullan
+                poleIndex = (poleIndex + 1) % 2;
             }
         }
     }

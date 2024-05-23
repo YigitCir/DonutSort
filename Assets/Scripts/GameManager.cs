@@ -9,12 +9,12 @@ public class GameManager : MonoBehaviour
     public WinConditionChecker winConditionChecker;
 
     private Donut selectedDonut = null;
-    private Pole originalPole = null; // Donut'ın ilk alındığı pole
-    private bool isMoving = false; // Donut hareket ederken tıklamaları engellemek için
+    private Pole originalPole = null; 
+    private bool isMoving = false; 
 
     public void HandlePoleClicked(Vector3 clickPosition)
     {
-        if (isMoving) return; // Donut hareket ederken yeni tıklamalara izin verme
+        if (isMoving) return; 
 
         Pole clickedPole = GetClickedPole(clickPosition);
         if (clickedPole == null)
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         {
             if (clickedPole == originalPole)
             {
-                // Donut zaten seçili ve aynı pole'a geri yerleştiriliyorsa işlemi iptal et
+                
                 Debug.Log("Donut already selected, same pole clicked. Cancelling operation.");
                 PlaceDonutBackToOriginalPole();
             }
@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
                         selectedDonut = null;
                         originalPole = null;
                         isMoving = false;
-                        winConditionChecker.CheckWinCondition(); // Win condition'u kontrol et
+                        winConditionChecker.CheckWinCondition();
                     });
         }
     }
@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
                         selectedDonut = null;
                         originalPole = null;
                         isMoving = false;
-                        winConditionChecker.CheckWinCondition(); // Win condition'u kontrol et
+                        winConditionChecker.CheckWinCondition();
                     });
         }
     }
