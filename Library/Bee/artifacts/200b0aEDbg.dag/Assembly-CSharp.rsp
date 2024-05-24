@@ -368,6 +368,7 @@
 "Assets/Scripts/DonutManager.cs"
 "Assets/Scripts/GameManager.cs"
 "Assets/Scripts/InputHandler.cs"
+"Assets/Scripts/IPoleElement.cs"
 "Assets/Scripts/Pole.cs"
 "Assets/Scripts/WinConditionChecker.cs"
 "Assets/Scripts/WinMessage.cs"
