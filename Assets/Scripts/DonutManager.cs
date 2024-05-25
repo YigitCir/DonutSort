@@ -3,81 +3,53 @@ using System.Collections.Generic;
 
 public class DonutManager : MonoBehaviour
 {
-    public GameObject donutPrefab; 
-    public Transform[] spawnPoints; 
-    public GameManager gameManager; 
+    public DonutData donutData;
+    private List<Donut> allDonuts = new List<Donut>();
 
-    private Color[] colors = { Color.red, Color.blue }; 
-
-    void Start()
+    public Donut CreateDonut(DonutType type, Vector3 position, Transform parent)
     {
-        if (spawnPoints.Length != gameManager.poles.Count)
+        GameObject prefab = donutData.GetPrefab(type);
+        if (prefab == null)
         {
-            Debug.LogError("Spawn points count must match the number of poles.");
-            return;
+            Debug.LogError("Donut prefab is not assigned for type: " + type);
+            return null;
         }
 
-        SpawnDonuts();
-    }
-
-    void SpawnDonuts()
-    {
-        List<GameObject> allDonuts = new List<GameObject>();
-
-        // 3 kırmızı ve 3 mavi donut oluştur
-        for (int i = 0; i < 3; i++)
-        {
-            CreateDonut(Color.red, allDonuts);
-            CreateDonut(Color.blue, allDonuts);
-        }
-
-        // Donutları pole'lara rastgele dağıt
-        ShuffleDonutsAndAssignToPoles(allDonuts);
-    }
-
-    void CreateDonut(Color color, List<GameObject> allDonuts)
-    {
-        // Donut oluştur ve listeye ekle
-        GameObject donutObject = Instantiate(donutPrefab);
+        GameObject donutObject = Instantiate(prefab, position, Quaternion.identity);
+        donutObject.transform.SetParent(parent);
+        donutObject.transform.localScale = new Vector3(8f, 0.4f, 8f);
         Donut donut = donutObject.GetComponent<Donut>();
-
-        if (donut == null)
+        if (donut != null)
         {
-            Debug.LogError("Donut script not found on the instantiated prefab!");
+            donut.type = type; // Set the donut type
+            Renderer renderer = donutObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = donutData.GetColor(type);
+            }
+            allDonuts.Add(donut);
         }
         else
         {
-            donut.ChangeColor(color);
-            allDonuts.Add(donutObject);
+            Debug.LogError("Donut script not found on the instantiated prefab!");
         }
+        return donut;
     }
 
-    void ShuffleDonutsAndAssignToPoles(List<GameObject> donuts)
+    public Color GetColor(DonutType type)
     {
-        System.Random rng = new System.Random();
-        int n = donuts.Count;
+        return donutData.GetColor(type);
+    }
 
-  
-        while (n > 1)
+    public void ClearAllDonuts()
+    {
+        foreach (var donut in allDonuts)
         {
-            n--;
-            int k = rng.Next(n + 1);
-            GameObject value = donuts[k];
-            donuts[k] = donuts[n];
-            donuts[n] = value;
-        }
-
-      
-        int poleIndex = 0;
-        foreach (var donutObject in donuts)
-        {
-            Donut donut = donutObject.GetComponent<Donut>();
             if (donut != null)
             {
-                Pole targetPole = gameManager.poles[poleIndex];
-                targetPole.StackDonut(donut);
-                poleIndex = (poleIndex + 1) % 2;
+                Destroy(donut.GetPrefab());
             }
         }
+        allDonuts.Clear();
     }
 }

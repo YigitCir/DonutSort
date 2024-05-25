@@ -47,7 +47,10 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/WinMessage.cs" />
     <Compile Include="Assets/Scripts/InputHandler.cs" />
+    <Compile Include="Assets/Scripts/DonutData.cs" />
     <Compile Include="Assets/Scripts/Donut.cs" />
+    <Compile Include="Assets/Scripts/LevelData.cs" />
+    <Compile Include="Assets/Scripts/LevelGenerator.cs" />
     <Compile Include="Assets/Scripts/WinConditionChecker.cs" />
     <Compile Include="Assets/Scripts/GameManager.cs" />
     <Compile Include="Assets/Scripts/DonutManager.cs" />

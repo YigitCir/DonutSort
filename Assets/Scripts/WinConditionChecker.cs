@@ -5,39 +5,64 @@ using UnityEngine.Events;
 
 public class WinConditionChecker : MonoBehaviour
 {
-    public List<Pole> poles;
-    public UnityEvent onWin; 
+    public UnityEvent onWin;
+    private List<Pole> poles;
+
+    public void SetPoles(List<Pole> poles)
+    {
+        this.poles = poles;
+    }
+
+    public List<Pole> GetPoles()
+    {
+        return poles;
+    }
 
     public void CheckWinCondition()
     {
-        bool redDonutsWon = false;
-        bool blueDonutsWon = false;
+        if (poles == null || poles.Count == 0)
+        {
+            Debug.LogError("No poles available for win condition check.");
+            return;
+        }
+
+        Dictionary<DonutType, bool> typeWinStatus = new Dictionary<DonutType, bool>();
+
+        // Mevcut oyun içindeki tüm donut türlerini belirleyin
+        HashSet<DonutType> currentTypesInGame = new HashSet<DonutType>();
 
         foreach (Pole pole in poles)
         {
-            if (pole.donutStack.Count == 0)
-                continue;
-
-            Color firstDonutColor = pole.donutStack.Peek().GetComponent<Renderer>().material.color;
-            bool allSameColor = pole.donutStack.All(donut => donut.GetComponent<Renderer>().material.color == firstDonutColor);
-
-            if (allSameColor)
+            foreach (Donut donut in pole.GetDonutStack())
             {
-                if (firstDonutColor == Color.red && pole.donutStack.Count == 3)
-                {
-                    redDonutsWon = true;
-                }
-                else if (firstDonutColor == Color.blue && pole.donutStack.Count == 3)
-                {
-                    blueDonutsWon = true;
-                }
+                currentTypesInGame.Add(donut.type);
             }
         }
 
-        if (redDonutsWon && blueDonutsWon)
+        foreach (DonutType type in currentTypesInGame)
+        {
+            typeWinStatus[type] = false;
+        }
+
+        foreach (Pole pole in poles)
+        {
+            if (pole.GetDonutCount() == 0)
+                continue;
+
+            Donut firstDonut = pole.PeekDonut();
+            DonutType firstDonutType = firstDonut.type;
+            bool allSameType = pole.GetDonutStack().All(donut => donut.type == firstDonutType);
+
+            if (allSameType && pole.GetDonutCount() >= 3)
+            {
+                typeWinStatus[firstDonutType] = true;
+            }
+        }
+
+        if (typeWinStatus.Values.All(status => status))
         {
             Debug.Log("You win!");
-            onWin.Invoke(); 
+            onWin.Invoke();
         }
     }
 }

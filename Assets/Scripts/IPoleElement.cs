@@ -1,18 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
-public class IPoleElement : MonoBehaviour
+public interface IPoleElement
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    GameObject GetPrefab();
+    void ChangeColor(Color color);
+    Tween MoveTo(Vector3 targetPosition, float duration);
 }
