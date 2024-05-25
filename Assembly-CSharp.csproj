@@ -53,7 +53,6 @@
     <Compile Include="Assets/Scripts/LevelGenerator.cs" />
     <Compile Include="Assets/Scripts/WinConditionChecker.cs" />
     <Compile Include="Assets/Scripts/GameManager.cs" />
-    <Compile Include="Assets/Scripts/DonutManager.cs" />
     <Compile Include="Assets/Scripts/IPoleElement.cs" />
     <Compile Include="Assets/Scripts/Pole.cs" />
     <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />

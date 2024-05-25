@@ -1,43 +1,25 @@
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
 [CreateAssetMenu(fileName = "New Donut Data", menuName = "Pole Elements/Donut Data")]
-public class DonutData : ScriptableObject
+public class DonutData : ScriptableObject, IPoleElement
 {
-    public List<DonutPrefabData> donutPrefabs;
+    public GameObject prefab;
+    public DonutType type;
 
-    public GameObject GetPrefab(DonutType type)
+    public GameObject GetPrefab()
     {
-        foreach (var donutPrefab in donutPrefabs)
+        return prefab;
+    }
+
+    public Tween MoveTo(Vector3 targetPosition, float duration)
+    {
+        if (prefab != null)
         {
-            if (donutPrefab.type == type)
-            {
-                return donutPrefab.prefab;
-            }
+            return prefab.transform.DOMove(targetPosition, duration).SetEase(Ease.InOutCirc);
         }
         return null;
     }
-
-    public Color GetColor(DonutType type)
-    {
-        foreach (var donutPrefab in donutPrefabs)
-        {
-            if (donutPrefab.type == type)
-            {
-                return donutPrefab.color;
-            }
-        }
-        return Color.white;
-    }
-}
-
-[System.Serializable]
-public class DonutPrefabData
-{
-    public DonutType type;
-    public GameObject prefab;
-    public Color color;
 }
 
 public enum DonutType
@@ -46,5 +28,10 @@ public enum DonutType
     Type2,
     Type3,
     Type4,
-    Type5
+    Type5,
+    Type6,
+    Type7,
+    Type8,
+    Type9,
+    Type10
 }

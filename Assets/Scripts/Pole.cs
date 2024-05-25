@@ -46,6 +46,10 @@ public class Pole : MonoBehaviour
 
     public void ClearDonuts()
     {
-        donutStack.Clear();
+        while (donutStack.Count > 0)
+        {
+            Donut donut = donutStack.Pop();
+            Destroy(donut.gameObject);
+        }
     }
 }

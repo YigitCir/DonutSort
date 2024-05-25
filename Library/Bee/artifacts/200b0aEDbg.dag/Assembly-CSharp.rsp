@@ -366,7 +366,6 @@
 -analyzer:"/Applications/Unity/Hub/Editor/2022.3.26f1/Unity.app/Contents/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/Scripts/Donut.cs"
 "Assets/Scripts/DonutData.cs"
-"Assets/Scripts/DonutManager.cs"
 "Assets/Scripts/GameManager.cs"
 "Assets/Scripts/InputHandler.cs"
 "Assets/Scripts/IPoleElement.cs"

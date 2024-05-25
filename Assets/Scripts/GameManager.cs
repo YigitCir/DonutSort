@@ -1,12 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public LevelGenerator levelGenerator;
     public WinConditionChecker winConditionChecker;
     public float moveDuration = 1f;
+    public WinMessage winMessage;
+    public LevelData[] levels; // Bölüm verilerini tutacak dizi
+    private int currentLevelIndex = 0;
 
     private Donut selectedDonut = null;
     private Pole originalPole = null;
@@ -22,7 +26,30 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        levelGenerator.GenerateLevel();
+        if (winMessage == null)
+        {
+            Debug.LogError("WinMessage is not assigned in GameManager.");
+            return;
+        }
+
+        if (levels.Length == 0)
+        {
+            Debug.LogError("No levels assigned to the GameManager.");
+            return;
+        }
+
+        // Butonun OnClick olayını bağla
+        winMessage.nextLevelButton.onClick.RemoveAllListeners(); // Mevcut dinleyicileri temizle
+      //  winMessage.nextLevelButton.onClick.AddListener(LoadNextLevel);
+
+        LoadLevel(levels[currentLevelIndex]); // İlk bölümü yükle
+    }
+
+    public void LoadLevel(LevelData levelData)
+    {
+        initialDonutStates.Clear();
+        levelGenerator.ClearPreviousLevel(); // Önceki level'ı temizle
+        levelGenerator.GenerateLevel(levelData);
 
         List<Pole> poles = new List<Pole>();
         foreach (var poleObj in levelGenerator.GetGeneratedPoles())
@@ -38,6 +65,21 @@ public class GameManager : MonoBehaviour
             }
         }
         winConditionChecker.SetPoles(poles);
+        winConditionChecker.onWin.RemoveAllListeners(); // Mevcut dinleyicileri temizle
+        winConditionChecker.onWin.AddListener(OnLevelComplete); // Yeni dinleyici ekle
+    }
+
+    public void LoadNextLevel()
+    {
+        Debug.Log("LoadNextLevel called");
+        currentLevelIndex++;
+        if (currentLevelIndex >= levels.Length)
+        {
+            currentLevelIndex = 0; // Tüm bölümler tamamlandığında ilk bölüme geri dön
+        }
+        LoadLevel(levels[currentLevelIndex]);
+        winMessage.nextLevelButton.gameObject.SetActive(false);
+        winMessage.winText.gameObject.SetActive(false);
     }
 
     public void HandlePoleClicked(Vector3 clickPosition)
@@ -75,6 +117,12 @@ public class GameManager : MonoBehaviour
 
     private Pole GetClickedPole(Vector3 clickPosition)
     {
+        if (winConditionChecker == null)
+        {
+            Debug.LogError("WinConditionChecker is not assigned in GameManager.");
+            return null;
+        }
+
         foreach (var pole in winConditionChecker.GetPoles())
         {
             if (Vector3.Distance(pole.transform.position, clickPosition) < 2.0f)
@@ -145,18 +193,16 @@ public class GameManager : MonoBehaviour
             pole.ClearDonuts(); // Pole'daki mevcut donut'ları temizle
         }
 
-        foreach (var pair in initialDonutStates)
-        {
-            Donut donut = pair.Key;
-            Pole pole = pair.Value.Item1;
-            Vector3 initialPosition = pair.Value.Item2;
-
-            donut.transform.position = initialPosition;
-            pole.StackDonut(donut); // Donut'ları ilk yerleştirildikleri pole'lara geri koy
-        }
-
         selectedDonut = null;
         originalPole = null;
         isMoving = false;
+
+        // Mevcut level'ı yeniden yükle
+        LoadLevel(levels[currentLevelIndex]);
+    }
+
+    private void OnLevelComplete()
+    {
+        winMessage.ShowWinMessage();
     }
 }

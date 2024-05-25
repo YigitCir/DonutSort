@@ -10,13 +10,7 @@ public class LevelData : ScriptableObject
 [System.Serializable]
 public class PoleData
 {
+    public GameObject polePrefab;
     public Vector3 position;
-    public List<DonutSpawnData> donuts;
-}
-
-[System.Serializable]
-public class DonutSpawnData
-{
-    public DonutType type;
-    public int count;
+    public List<DonutData> donuts;
 }

@@ -1,71 +1,91 @@
 using UnityEngine;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class LevelGenerator : MonoBehaviour
 {
-    public LevelData levelData;
-    public GameObject polePrefab;
-    public DonutManager donutManager;
-
     private List<GameObject> generatedPoles = new List<GameObject>();
+    public float dropHeight = 5f; // Donutların düşeceği yükseklik
+    public float dropDuration = 0.5f; // Düşme süresi
+    public float dropInterval = 0.3f; // Donutların teker teker düşme aralığı
 
-    void Start()
-    {
-        GenerateLevel();
-    }
-
-    public void GenerateLevel()
+    public void GenerateLevel(LevelData levelData)
     {
         ClearPreviousLevel();
 
+        int donutCount = 0;
         foreach (var poleData in levelData.poles)
         {
-            Vector3 position = poleData.position;
-            GameObject poleObject = Instantiate(polePrefab, position, Quaternion.identity);
-            generatedPoles.Add(poleObject);
-
-            Pole pole = poleObject.GetComponent<Pole>();
-            if (pole == null)
+            if (poleData.polePrefab == null)
             {
-                Debug.LogError("Pole script not found on the instantiated pole prefab!");
+                Debug.LogError("Pole prefab is null. Please assign a valid prefab in LevelData.");
                 continue;
             }
 
-            pole.stackPosition = poleObject.transform.Find("StackPosition");
-            if (pole.stackPosition == null)
+            GameObject pole = Instantiate(poleData.polePrefab, poleData.position, Quaternion.identity);
+            Pole poleComponent = pole.GetComponent<Pole>();
+
+            if (poleComponent == null)
             {
-                Debug.LogError("StackPosition not found on the pole prefab!");
+                Debug.LogError("Pole prefab does not have a Pole component.");
                 continue;
             }
 
-            foreach (var donutSpawnData in poleData.donuts)
+            foreach (var donutData in poleData.donuts)
             {
-                for (int i = 0; i < donutSpawnData.count; i++)
+                if (donutData.GetPrefab() == null)
                 {
-                    Vector3 dropPosition = pole.stackPosition.position + Vector3.up * 5f;
-                    Donut donut = donutManager.CreateDonut(donutSpawnData.type, dropPosition, pole.stackPosition);
-                    if (donut != null)
-                    {
-                        donut.ChangeColor(donutManager.GetColor(donutSpawnData.type));
-                        pole.StackDonut(donut);
-                    }
+                    Debug.LogError("Donut prefab is null. Please assign a valid prefab in DonutData.");
+                    continue;
                 }
+
+                // Donut'ları yukarıdan spawn et ve aşağı düşme animasyonu uygula
+                Vector3 startPosition = poleComponent.stackPosition.position + Vector3.up * dropHeight;
+                Vector3 targetPosition = poleComponent.stackPosition.position + Vector3.up * (poleComponent.GetDonutCount() * poleComponent.donutHeight);
+
+                GameObject donutObject = Instantiate(donutData.GetPrefab(), startPosition, Quaternion.identity);
+                Donut donutComponent = donutObject.GetComponent<Donut>();
+                if (donutComponent == null)
+                {
+                    Debug.LogError("Donut prefab does not have a Donut component.");
+                    continue;
+                }
+
+                donutComponent.type = donutData.type;
+                float dropDelay = donutCount * dropInterval;
+
+                // Donut'ı hedef pozisyona doğru hareket ettir
+                donutComponent.transform.DOMove(targetPosition, dropDuration)
+                    .SetDelay(dropDelay)
+                    .SetEase(Ease.OutBounce)
+                    .OnComplete(() => 
+                    {
+                        poleComponent.StackDonut(donutComponent);
+                    });
+
+                donutCount++;
             }
-        }
-    }
 
-    private void ClearPreviousLevel()
-    {
-        foreach (var pole in generatedPoles)
-        {
-            Destroy(pole);
+            generatedPoles.Add(pole);
         }
-
-        generatedPoles.Clear();
     }
 
     public List<GameObject> GetGeneratedPoles()
     {
         return generatedPoles;
+    }
+
+    public void ClearPreviousLevel()
+    {
+        foreach (var pole in generatedPoles)
+        {
+            Pole poleComponent = pole.GetComponent<Pole>();
+            if (poleComponent != null)
+            {
+                poleComponent.ClearDonuts(); // Pole'daki mevcut donut'ları temizle
+            }
+            Destroy(pole);
+        }
+        generatedPoles.Clear();
     }
 }
