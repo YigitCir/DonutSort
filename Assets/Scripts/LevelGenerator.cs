@@ -5,9 +5,9 @@ using DG.Tweening;
 public class LevelGenerator : MonoBehaviour
 {
     private List<GameObject> generatedPoles = new List<GameObject>();
-    public float dropHeight = 5f; // Donutların düşeceği yükseklik
-    public float dropDuration = 0.5f; // Düşme süresi
-    public float dropInterval = 0.3f; // Donutların teker teker düşme aralığı
+    public float dropHeight = 5f; 
+    public float dropDuration = 0.5f; 
+    public float dropInterval = 0.3f; 
 
     public void GenerateLevel(LevelData levelData)
     {
@@ -39,7 +39,7 @@ public class LevelGenerator : MonoBehaviour
                     continue;
                 }
 
-                // Donut'ları yukarıdan spawn et ve aşağı düşme animasyonu uygula
+                
                 Vector3 startPosition = poleComponent.stackPosition.position + Vector3.up * dropHeight;
                 Vector3 targetPosition = poleComponent.stackPosition.position + Vector3.up * (poleComponent.GetDonutCount() * poleComponent.donutHeight);
 
@@ -54,7 +54,7 @@ public class LevelGenerator : MonoBehaviour
                 donutComponent.type = donutData.type;
                 float dropDelay = donutCount * dropInterval;
 
-                // Donut'ı hedef pozisyona doğru hareket ettir
+                
                 donutComponent.transform.DOMove(targetPosition, dropDuration)
                     .SetDelay(dropDelay)
                     .SetEase(Ease.OutBounce)
@@ -82,7 +82,7 @@ public class LevelGenerator : MonoBehaviour
             Pole poleComponent = pole.GetComponent<Pole>();
             if (poleComponent != null)
             {
-                poleComponent.ClearDonuts(); // Pole'daki mevcut donut'ları temizle
+                poleComponent.ClearDonuts(); 
             }
             Destroy(pole);
         }

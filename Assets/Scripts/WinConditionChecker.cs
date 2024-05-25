@@ -28,7 +28,7 @@ public class WinConditionChecker : MonoBehaviour
 
         Dictionary<DonutType, bool> typeWinStatus = new Dictionary<DonutType, bool>();
 
-        // Mevcut oyun içindeki tüm donut türlerini belirleyin
+        
         HashSet<DonutType> currentTypesInGame = new HashSet<DonutType>();
 
         foreach (Pole pole in poles)
