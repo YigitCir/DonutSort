@@ -12,25 +12,27 @@ public class GameManager : MonoBehaviour
     public LevelData[] levels;
     private int currentLevelIndex = 0;
 
-    private Donut selectedDonut = null;
-    private Pole originalPole = null;
+    private DonutView _selectedDonutView = null;
+    private PoleView _originalPoleView = null;
     private bool isMoving = false;
 
-    private Dictionary<Donut, (Pole, Vector3)> initialDonutStates = new Dictionary<Donut, (Pole, Vector3)>();
+    private Dictionary<DonutView, (PoleView, Vector3)> initialDonutStates = new Dictionary<DonutView, (PoleView, Vector3)>();
 
     void Start()
     {
-        if (levelGenerator == null)
-        {
-            Debug.LogError("LevelGenerator is not assigned in GameManager.");
-            return;
-        }
-
-        if (winMessage == null)
-        {
-            Debug.LogError("WinMessage is not assigned in GameManager.");
-            return;
-        }
+     
+        // Not needed, unity already throws error, and it should. 
+        // if (levelGenerator == null)
+        // {
+        //     Debug.LogError("LevelGenerator is not assigned in GameManager.");
+        //     return;
+        // }
+        //
+        // if (winMessage == null)
+        // {
+        //     Debug.LogError("WinMessage is not assigned in GameManager.");
+        //     return;
+        // }
 
         if (levels.Length == 0)
         {
@@ -51,16 +53,16 @@ public class GameManager : MonoBehaviour
         levelGenerator.ClearPreviousLevel();
         levelGenerator.GenerateLevel(levelData);
 
-        List<Pole> poles = new List<Pole>();
+        List<PoleView> poles = new List<PoleView>();
         foreach (var poleObj in levelGenerator.GetGeneratedPoles())
         {
-            Pole pole = poleObj.GetComponent<Pole>();
-            if (pole != null)
+            PoleView poleView = poleObj.GetComponent<PoleView>();
+            if (poleView != null)
             {
-                poles.Add(pole);
-                foreach (var donut in pole.GetDonutStack())
+                poles.Add(poleView);
+                foreach (var donut in poleView.GetDonutStack())
                 {
-                    initialDonutStates[donut] = (pole, donut.transform.position);
+                    initialDonutStates[donut] = (poleView, donut.transform.position);
                 }
             }
         }
@@ -86,36 +88,36 @@ public class GameManager : MonoBehaviour
     {
         if (isMoving) return;
 
-        Pole clickedPole = GetClickedPole(clickPosition);
-        if (clickedPole == null)
+        PoleView clickedPoleView = GetClickedPole(clickPosition);
+        if (clickedPoleView == null)
         {
             Debug.Log("No pole found at click position");
             return;
         }
 
-        if (selectedDonut == null)
+        if (_selectedDonutView == null)
         {
-            Donut poppedDonut = clickedPole.PopDonut() as Donut;
-            if (poppedDonut != null)
+            DonutView poppedDonutView = clickedPoleView.PopDonut() as DonutView;
+            if (poppedDonutView != null)
             {
-                SelectDonut(poppedDonut, clickedPole);
+                SelectDonut(poppedDonutView, clickedPoleView);
             }
         }
         else
         {
-            if (clickedPole == originalPole)
+            if (clickedPoleView == _originalPoleView)
             {
                 Debug.Log("Donut already selected, same pole clicked. Cancelling operation.");
                 PlaceDonutBackToOriginalPole();
             }
             else
             {
-                MoveSelectedDonutToPole(selectedDonut, clickedPole);
+                MoveSelectedDonutToPole(_selectedDonutView, clickedPoleView);
             }
         }
     }
 
-    private Pole GetClickedPole(Vector3 clickPosition)
+    private PoleView GetClickedPole(Vector3 clickPosition)
     {
         if (winConditionChecker == null)
         {
@@ -133,34 +135,34 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public void SelectDonut(Donut donut, Pole pole)
+    public void SelectDonut(DonutView donutView, PoleView poleView)
     {
-        if (selectedDonut == null)
+        if (_selectedDonutView == null)
         {
-            selectedDonut = donut;
-            originalPole = pole;
+            _selectedDonutView = donutView;
+            _originalPoleView = poleView;
             isMoving = true;
-            selectedDonut.MoveTo(donut.transform.position + Vector3.up * 2, moveDuration).OnComplete(() =>
+            _selectedDonutView.MoveTo(donutView.transform.position + Vector3.up * 2, moveDuration).OnComplete(() =>
             {
                 isMoving = false;
             });
         }
     }
 
-    public void MoveSelectedDonutToPole(Donut donut, Pole targetPole)
+    public void MoveSelectedDonutToPole(DonutView donutView, PoleView targetPoleView)
     {
-        if (selectedDonut != null && targetPole != null)
+        if (_selectedDonutView != null && targetPoleView != null)
         {
             isMoving = true;
-            Vector3 targetPosition = new Vector3(targetPole.stackPosition.position.x, donut.transform.position.y, targetPole.stackPosition.position.z);
+            Vector3 targetPosition = new Vector3(targetPoleView.stackPosition.position.x, donutView.transform.position.y, targetPoleView.stackPosition.position.z);
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(donut.transform.DOMove(targetPosition, moveDuration))
-                    .Append(donut.transform.DOMoveY(targetPole.stackPosition.position.y + (targetPole.GetDonutCount() * targetPole.donutHeight), moveDuration))
+            sequence.Append(donutView.transform.DOMove(targetPosition, moveDuration))
+                    .Append(donutView.transform.DOMoveY(targetPoleView.stackPosition.position.y + (targetPoleView.GetDonutCount() * targetPoleView.donutHeight), moveDuration))
                     .OnComplete(() =>
                     {
-                        targetPole.StackDonut(donut);
-                        selectedDonut = null;
-                        originalPole = null;
+                        targetPoleView.StackDonut(donutView);
+                        _selectedDonutView = null;
+                        _originalPoleView = null;
                         isMoving = false;
                         winConditionChecker.CheckWinCondition();
                     });
@@ -169,18 +171,18 @@ public class GameManager : MonoBehaviour
 
     private void PlaceDonutBackToOriginalPole()
     {
-        if (selectedDonut != null && originalPole != null)
+        if (_selectedDonutView != null && _originalPoleView != null)
         {
             isMoving = true;
-            Vector3 targetPosition = new Vector3(originalPole.stackPosition.position.x, selectedDonut.transform.position.y, originalPole.stackPosition.position.z);
+            Vector3 targetPosition = new Vector3(_originalPoleView.stackPosition.position.x, _selectedDonutView.transform.position.y, _originalPoleView.stackPosition.position.z);
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(selectedDonut.transform.DOMove(targetPosition, moveDuration))
-                    .Append(selectedDonut.transform.DOMoveY(originalPole.stackPosition.position.y + (originalPole.GetDonutCount() * originalPole.donutHeight), moveDuration))
+            sequence.Append(_selectedDonutView.transform.DOMove(targetPosition, moveDuration))
+                    .Append(_selectedDonutView.transform.DOMoveY(_originalPoleView.stackPosition.position.y + (_originalPoleView.GetDonutCount() * _originalPoleView.donutHeight), moveDuration))
                     .OnComplete(() =>
                     {
-                        originalPole.StackDonut(selectedDonut);
-                        selectedDonut = null;
-                        originalPole = null;
+                        _originalPoleView.StackDonut(_selectedDonutView);
+                        _selectedDonutView = null;
+                        _originalPoleView = null;
                         isMoving = false;
                     });
         }
@@ -193,8 +195,8 @@ public class GameManager : MonoBehaviour
             pole.ClearDonuts(); 
         }
 
-        selectedDonut = null;
-        originalPole = null;
+        _selectedDonutView = null;
+        _originalPoleView = null;
         isMoving = false;
 
         
@@ -203,6 +205,6 @@ public class GameManager : MonoBehaviour
 
     private void OnLevelComplete()
     {
-        winMessage.ShowWinMessage();
+        WinMessage.InvokeSetActiveWinMessage(true);
     }
 }

@@ -4,13 +4,11 @@ using System.Collections.Generic;
 [CreateAssetMenu(fileName = "New Level Data", menuName = "Level Data/Level Data")]
 public class LevelData : ScriptableObject
 {
-    public List<PoleData> poles;
+    public List<PoleStartState> poles;
 }
 
 [System.Serializable]
-public class PoleData
+public class PoleStartState
 {
-    public GameObject polePrefab;
-    public Vector3 position;
-    public List<DonutData> donuts;
+    public List<DonutType> Types;
 }

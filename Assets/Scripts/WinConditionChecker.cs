@@ -6,14 +6,14 @@ using UnityEngine.Events;
 public class WinConditionChecker : MonoBehaviour
 {
     public UnityEvent onWin;
-    private List<Pole> poles;
+    private List<PoleView> poles;
 
-    public void SetPoles(List<Pole> poles)
+    public void SetPoles(List<PoleView> poles)
     {
         this.poles = poles;
     }
 
-    public List<Pole> GetPoles()
+    public List<PoleView> GetPoles()
     {
         return poles;
     }
@@ -31,9 +31,9 @@ public class WinConditionChecker : MonoBehaviour
         
         HashSet<DonutType> currentTypesInGame = new HashSet<DonutType>();
 
-        foreach (Pole pole in poles)
+        foreach (PoleView pole in poles)
         {
-            foreach (Donut donut in pole.GetDonutStack())
+            foreach (DonutView donut in pole.GetDonutStack())
             {
                 currentTypesInGame.Add(donut.type);
             }
@@ -44,13 +44,13 @@ public class WinConditionChecker : MonoBehaviour
             typeWinStatus[type] = false;
         }
 
-        foreach (Pole pole in poles)
+        foreach (PoleView pole in poles)
         {
             if (pole.GetDonutCount() == 0)
                 continue;
 
-            Donut firstDonut = pole.PeekDonut();
-            DonutType firstDonutType = firstDonut.type;
+            DonutView firstDonutView = pole.PeekDonut();
+            DonutType firstDonutType = firstDonutView.type;
             bool allSameType = pole.GetDonutStack().All(donut => donut.type == firstDonutType);
 
             if (allSameType && pole.GetDonutCount() >= 3)

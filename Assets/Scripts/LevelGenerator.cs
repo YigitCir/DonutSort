@@ -1,13 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
+using DefaultNamespace;
+using DefaultNamespace.Pole;
 using DG.Tweening;
 
-public class LevelGenerator : MonoBehaviour
+public class LevelGenerator 
 {
     private List<GameObject> generatedPoles = new List<GameObject>();
     public float dropHeight = 5f; 
     public float dropDuration = 0.5f; 
-    public float dropInterval = 0.3f; 
+    public float dropInterval = 0.3f;
+
+    public List<DonutInstance> DonutInstances;
+    public List<PoleInstance> PoleInstances;
 
     public void GenerateLevel(LevelData levelData)
     {
@@ -22,10 +27,10 @@ public class LevelGenerator : MonoBehaviour
                 continue;
             }
 
-            GameObject pole = Instantiate(poleData.polePrefab, poleData.position, Quaternion.identity);
-            Pole poleComponent = pole.GetComponent<Pole>();
+            GameObject pole = GameObject.Instantiate(poleData.polePrefab, poleData.position, Quaternion.identity);
+            PoleView poleViewComponent = pole.GetComponent<PoleView>();
 
-            if (poleComponent == null)
+            if (poleViewComponent == null)
             {
                 Debug.LogError("Pole prefab does not have a Pole component.");
                 continue;
@@ -40,27 +45,27 @@ public class LevelGenerator : MonoBehaviour
                 }
 
                 
-                Vector3 startPosition = poleComponent.stackPosition.position + Vector3.up * dropHeight;
-                Vector3 targetPosition = poleComponent.stackPosition.position + Vector3.up * (poleComponent.GetDonutCount() * poleComponent.donutHeight);
+                Vector3 startPosition = poleViewComponent.stackPosition.position + Vector3.up * dropHeight;
+                Vector3 targetPosition = poleViewComponent.stackPosition.position + Vector3.up * (poleViewComponent.GetDonutCount() * poleViewComponent.donutHeight);
 
-                GameObject donutObject = Instantiate(donutData.GetPrefab(), startPosition, Quaternion.identity);
-                Donut donutComponent = donutObject.GetComponent<Donut>();
-                if (donutComponent == null)
+                GameObject donutObject = GameObject.Instantiate(donutData., startPosition, Quaternion.identity);
+                DonutView donutViewComponent = donutObject.GetComponent<DonutView>();
+                if (donutViewComponent == null)
                 {
                     Debug.LogError("Donut prefab does not have a Donut component.");
                     continue;
                 }
 
-                donutComponent.type = donutData.type;
+                donutViewComponent.type = donutData.type;
                 float dropDelay = donutCount * dropInterval;
 
                 
-                donutComponent.transform.DOMove(targetPosition, dropDuration)
+                donutViewComponent.transform.DOMove(targetPosition, dropDuration)
                     .SetDelay(dropDelay)
                     .SetEase(Ease.OutBounce)
                     .OnComplete(() => 
                     {
-                        poleComponent.StackDonut(donutComponent);
+                        poleViewComponent.StackDonut(donutViewComponent);
                     });
 
                 donutCount++;
@@ -79,13 +84,22 @@ public class LevelGenerator : MonoBehaviour
     {
         foreach (var pole in generatedPoles)
         {
-            Pole poleComponent = pole.GetComponent<Pole>();
-            if (poleComponent != null)
+            PoleView poleViewComponent = pole.GetComponent<PoleView>();
+            if (poleViewComponent != null)
             {
-                poleComponent.ClearDonuts(); 
+                poleViewComponent.ClearDonuts(); 
             }
-            Destroy(pole);
+            //Be careful about what you are destroying. pole would destroy the component only, while pole.gameobject destroys the entire gameobjects
+            GameObject.Destroy(pole.gameObject);
+            //GameObject.Destroy(pole);
         }
         generatedPoles.Clear();
+
+
+        foreach (var pole in PoleInstances)
+        {
+            pole.Clear();
+        }
+        
     }
 }
