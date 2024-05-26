@@ -58,7 +58,7 @@ namespace DefaultNamespace.Movement
             return T.DOMove(targetPos, data.Duration).SetEase(data.BaseEase);
         }
         
-        public static Tween MoveBetween(Transform T, Vector3 targetPos)
+        public static Tween Travel(Transform T, Vector3 targetPos)
         {
             var data = MovementConfig.Instance.GetByType(MovementType.MoveBetween);
             return T.DOMove(targetPos, data.Duration).SetEase(data.BaseEase);

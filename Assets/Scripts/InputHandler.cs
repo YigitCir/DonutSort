@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,6 +23,10 @@ public class InputHandler : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, inputLayerMask))
             {
+                if (hit.collider.TryGetComponent<IClickable>(out var clicked))
+                {
+                    clicked.OnClick();
+                }
                 Debug.Log("Hit detected: " + hit.collider.name);
                 OnPoleClicked.Invoke(hit.point);
                 StartCoroutine(Cooldown());

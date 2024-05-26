@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace.Helpers;
 using DefaultNamespace.Movement;
+using UnityEngine;
 
 namespace DefaultNamespace.Pole
 {
@@ -9,31 +11,40 @@ namespace DefaultNamespace.Pole
     public class PoleData
     {
         public int PoleIndex;
-        public List<DonutData> Donuts; 
+        public int Height;
+        public Vector3 BasePosition;
+        public List<DonutInstance> Donuts;
 
-        public PoleData(int poleIndex, List<DonutData> donuts)
+        public Vector3 RisePosition => BasePosition.Add(y: Height);
+        public Vector3 LandPosition => BasePosition.Add(y: Donuts.Count * DonutFactoryConfig.Instance.DonutHeight);
+
+        public Vector3 ExitPosition => BasePosition.Add(y: 15f);
+
+        public PoleData(int poleIndex, List<DonutInstance> donuts)
         {
             PoleIndex = poleIndex;
             Donuts = donuts;
         }
 
-        public void AddDonut(DonutData data)
+        public void AddDonut(DonutInstance data)
         {
             Donuts.Add(data);
-            data.OnMoveEvent(MovementConfig.Instance.GetByType(MovementType.Land));
         }
 
-        public void RemoveDonut(DonutData data)
+        public DonutInstance PopDonut()
         {
+            var data = Donuts[^1];
             Donuts.Remove(data);
-            data.OnMoveEvent(MovementConfig.Instance.GetByType(MovementType.Rise));
+            return data;
         }
+
+        public bool HasAnyDonut => Donuts.Count != 0;
 
         public bool IsSolvedState()
         {
-            if (Donuts.Count == 0) return true;
-            var firstType = Donuts[0].Type;
-            return Donuts.All(data => data.Type == firstType);
+            if (!HasAnyDonut) return true;
+            var firstType = Donuts[0].Data.Type;
+            return Donuts.All(instance => instance.Data.Type == firstType);
         }
         
         

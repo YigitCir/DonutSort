@@ -2,6 +2,7 @@
 
 
 //This is used to serialize interface references in the unity editor. 
+//but just use Odin, its way better
 [System.Serializable]
 public class IRef<T> : ISerializationCallbackReceiver where T : class
 {
