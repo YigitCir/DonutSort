@@ -116,6 +116,7 @@
 -define:ENABLE_TIMELINE
 -define:ENABLE_LEGACY_INPUT_MANAGER
 -define:TEXTCORE_FONT_ENGINE_1_5_OR_NEWER
+-define:DOTWEEN
 -define:MODULE_ANIMATION_EXISTS
 -define:MODULE_PHYSICS_EXISTS
 -define:MODULE_PHYSICS_2D_EXISTS
@@ -342,6 +343,17 @@
 -r:"Assets/Plugins/Demigiant/DOTween/Editor/DOTweenEditor.dll"
 -r:"Assets/Plugins/Demigiant/DOTweenPro/DOTweenPro.dll"
 -r:"Assets/Plugins/Demigiant/DOTweenPro/Editor/DOTweenProEditor.dll"
+-r:"Library/PackageCache/com.google.ads.mobile@9.1.0/GoogleMobileAds/GoogleMobileAds.Common.dll"
+-r:"Library/PackageCache/com.google.ads.mobile@9.1.0/GoogleMobileAds/GoogleMobileAds.Core.dll"
+-r:"Library/PackageCache/com.google.ads.mobile@9.1.0/GoogleMobileAds/GoogleMobileAds.dll"
+-r:"Library/PackageCache/com.google.ads.mobile@9.1.0/GoogleMobileAds/GoogleMobileAds.Ump.dll"
+-r:"Library/PackageCache/com.google.ads.mobile@9.1.0/GoogleMobileAds/GoogleMobileAds.Ump.Unity.dll"
+-r:"Library/PackageCache/com.google.ads.mobile@9.1.0/GoogleMobileAds/GoogleMobileAds.Unity.dll"
+-r:"Library/PackageCache/com.google.external-dependency-manager@1.2.179/ExternalDependencyManager/Editor/1.2.179/Google.IOSResolver.dll"
+-r:"Library/PackageCache/com.google.external-dependency-manager@1.2.179/ExternalDependencyManager/Editor/1.2.179/Google.JarResolver.dll"
+-r:"Library/PackageCache/com.google.external-dependency-manager@1.2.179/ExternalDependencyManager/Editor/1.2.179/Google.PackageManagerResolver.dll"
+-r:"Library/PackageCache/com.google.external-dependency-manager@1.2.179/ExternalDependencyManager/Editor/1.2.179/Google.VersionHandlerImpl.dll"
+-r:"Library/PackageCache/com.google.external-dependency-manager@1.2.179/ExternalDependencyManager/Editor/Google.VersionHandler.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@2.3.1/Lib/Editor/PlasticSCM/log4netPlastic.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@2.3.1/Lib/Editor/PlasticSCM/Unity.Plastic.Antlr3.Runtime.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@2.3.1/Lib/Editor/PlasticSCM/Unity.Plastic.Newtonsoft.Json.dll"

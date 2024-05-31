@@ -7,17 +7,18 @@ public class PoleClickedEvent : UnityEvent<Vector3> { }
 
 public class InputHandler : MonoBehaviour
 {
-    public LayerMask inputLayerMask; 
+    public LayerMask inputLayerMask; // Layer mask to identify the input field
     public PoleClickedEvent OnPoleClicked;
-    public float cooldownTime = 0.5f; 
-    private bool isCooldown = false; 
+    public float cooldownTime = 0.5f; // Cooldown süresi (saniye cinsinden)
+    private bool isCooldown = false; // Cooldown durumunu kontrol etmek için
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !isCooldown) 
+        if (Input.GetMouseButtonDown(0) && !isCooldown) // Detect left mouse button click
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 2.0f); 
+            Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 2.0f); // Draw the ray for 2 seconds in red
+
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, inputLayerMask))
             {

@@ -4,5 +4,5 @@ using DG.Tweening;
 public interface IPoleElement
 {
     GameObject GetPrefab();
-    Tween MoveTo(Vector3 targetPosition, float duration);
+  //  Tween MoveTo(Vector3 targetPosition, float duration);
 }

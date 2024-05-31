@@ -11,7 +11,7 @@ public class DonutData : ScriptableObject, IPoleElement
     {
         return prefab;
     }
-
+/*
     public Tween MoveTo(Vector3 targetPosition, float duration)
     {
         if (prefab != null)
@@ -20,6 +20,7 @@ public class DonutData : ScriptableObject, IPoleElement
         }
         return null;
     }
+    */
 }
 
 public enum DonutType

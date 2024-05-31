@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c91f92f895bfc4f92b32b20641e0e3da, type: 3}
+  m_Name: Level2
+  m_EditorClassIdentifier: 
+  poles:
+  - polePrefab: {fileID: 4356232597375180897, guid: 438984133eb5a43fc92738db1b1c4123, type: 3}
+    position: {x: 3, y: 1, z: -5}
+    donuts:
+    - {fileID: 11400000, guid: 0aead89663be5407ab49e1196a1b8bde, type: 2}
+    - {fileID: 11400000, guid: 0b96e5ae8c5ec42568f610bbcc391480, type: 2}
+    - {fileID: 11400000, guid: 0b96e5ae8c5ec42568f610bbcc391480, type: 2}
+  - polePrefab: {fileID: 4356232597375180897, guid: 438984133eb5a43fc92738db1b1c4123, type: 3}
+    position: {x: 0, y: 1, z: -5}
+    donuts: []
+  - polePrefab: {fileID: 4356232597375180897, guid: 438984133eb5a43fc92738db1b1c4123, type: 3}
+    position: {x: -3, y: 1, z: -5}
+    donuts:
+    - {fileID: 11400000, guid: 0b96e5ae8c5ec42568f610bbcc391480, type: 2}
+    - {fileID: 11400000, guid: 0aead89663be5407ab49e1196a1b8bde, type: 2}
+    - {fileID: 11400000, guid: 0aead89663be5407ab49e1196a1b8bde, type: 2}
