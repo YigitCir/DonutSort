@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using DG.Tweening;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,13 +8,13 @@ public class GameManager : MonoBehaviour
     public WinConditionChecker winConditionChecker;
     public float moveDuration = 1f;
     public WinMessage winMessage;
-    public LevelData[] levels; // Bölüm verilerini tutacak dizi
-    private int currentLevelIndex = 0;
+    public LevelData[] levels;
+    public CommandManager commandManager; // Komut yöneticisi
 
+    private int currentLevelIndex = 0;
     private Donut selectedDonut = null;
     private Pole originalPole = null;
     private bool isMoving = false;
-
     private Dictionary<Donut, (Pole, Vector3)> initialDonutStates = new Dictionary<Donut, (Pole, Vector3)>();
 
     void Start()
@@ -38,17 +37,16 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Butonun OnClick olayını bağla
-        winMessage.nextLevelButton.onClick.RemoveAllListeners(); // Mevcut dinleyicileri temizle
-      //  winMessage.nextLevelButton.onClick.AddListener(LoadNextLevel);
+        winMessage.nextLevelButton.onClick.RemoveAllListeners();
+        winMessage.nextLevelButton.onClick.AddListener(LoadNextLevel);
 
-        LoadLevel(levels[currentLevelIndex]); // İlk bölümü yükle
+        LoadLevel(levels[currentLevelIndex]);
     }
 
     public void LoadLevel(LevelData levelData)
     {
         initialDonutStates.Clear();
-        levelGenerator.ClearPreviousLevel(); // Önceki level'ı temizle
+        levelGenerator.ClearPreviousLevel();
         levelGenerator.GenerateLevel(levelData);
 
         List<Pole> poles = new List<Pole>();
@@ -65,8 +63,8 @@ public class GameManager : MonoBehaviour
             }
         }
         winConditionChecker.SetPoles(poles);
-        winConditionChecker.onWin.RemoveAllListeners(); // Mevcut dinleyicileri temizle
-        winConditionChecker.onWin.AddListener(OnLevelComplete); // Yeni dinleyici ekle
+        winConditionChecker.onWin.RemoveAllListeners();
+        winConditionChecker.onWin.AddListener(OnLevelComplete);
     }
 
     public void LoadNextLevel()
@@ -75,7 +73,7 @@ public class GameManager : MonoBehaviour
         currentLevelIndex++;
         if (currentLevelIndex >= levels.Length)
         {
-            currentLevelIndex = 0; // Tüm bölümler tamamlandığında ilk bölüme geri dön
+            currentLevelIndex = 0;
         }
         LoadLevel(levels[currentLevelIndex]);
         winMessage.nextLevelButton.gameObject.SetActive(false);
@@ -125,7 +123,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var pole in winConditionChecker.GetPoles())
         {
-            if (Vector3.Distance(pole.transform.position, clickPosition) < 2.0f)
+            if (Vector3.Distance(pole.transform.position, clickPosition) < 1.0f)
             {
                 return pole;
             }
@@ -153,12 +151,15 @@ public class GameManager : MonoBehaviour
         {
             isMoving = true;
             Vector3 targetPosition = new Vector3(targetPole.stackPosition.position.x, donut.transform.position.y, targetPole.stackPosition.position.z);
+            Vector3 originalPosition = new Vector3(originalPole.stackPosition.position.x, donut.transform.position.y, originalPole.stackPosition.position.z);
             Sequence sequence = DOTween.Sequence();
             sequence.Append(donut.transform.DOMove(targetPosition, moveDuration))
                     .Append(donut.transform.DOMoveY(targetPole.stackPosition.position.y + (targetPole.GetDonutCount() * targetPole.donutHeight), moveDuration))
                     .OnComplete(() =>
                     {
                         targetPole.StackDonut(donut);
+                        MoveCommand moveCommand = new MoveCommand(donut, originalPole, targetPole, originalPosition, targetPosition, moveDuration);
+                        commandManager.ExecuteCommand(moveCommand);
                         selectedDonut = null;
                         originalPole = null;
                         isMoving = false;
@@ -190,14 +191,13 @@ public class GameManager : MonoBehaviour
     {
         foreach (var pole in winConditionChecker.GetPoles())
         {
-            pole.ClearDonuts(); // Pole'daki mevcut donut'ları temizle
+            pole.ClearDonuts();
         }
 
         selectedDonut = null;
         originalPole = null;
         isMoving = false;
 
-        // Mevcut level'ı yeniden yükle
         LoadLevel(levels[currentLevelIndex]);
     }
 
